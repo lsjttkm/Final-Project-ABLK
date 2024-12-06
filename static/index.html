@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Black Jack</title>
+    <script>
+        async function startGame() {
+            const response = await fetch('/start', { method: 'POST' });
+            const data = await response.json();
+
+            // Clear previous results
+            clearResults();
+
+            // Reveal cards and values
+            await revealCard("player-hand", `Player gets: ${data.player_hand[0].value} of ${data.player_hand[0].suit}`);
+            await revealCard("player-hand", `Player gets: ${data.player_hand[1].value} of ${data.player_hand[1].suit}`);
+            updateValue("player-value", `Player Hand Value: ${data.player_value}`);
+
+            await revealCard("dealer-hand", `Dealer shows: ${data.dealer_hand[0].value} of ${data.dealer_hand[0].suit}`);
+            updateValue("dealer-value", `Dealer Hand Value: ${data.dealer_value}`);
+            await revealCard("dealer-hand", `Dealer has a hidden card`);
+
+            // Show the game buttons
+            document.getElementById('hit').style.display = 'inline';
+            document.getElementById('stand').style.display = 'inline';
+            document.getElementById('new-game').style.display = 'none';
+        }
+
+        async function hit() {
+            const response = await fetch('/hit', { method: 'POST' });
+            const data = await response.json();
+
+            // Reveal player's new card and updated value
+            const newCard = data.player_hand[data.player_hand.length - 1];
+            await revealCard("player-hand", `Player gets: ${newCard.value} of ${newCard.suit}`);
+            updateValue("player-value", `Player Hand Value: ${data.player_value}`);
+
+            // If the player busts, end the game
+            if (data.result) {
+                document.getElementById('result').innerText = data.result;
+                endGame();
+            }
+        }
+
+        async function stand() {
+            const response = await fetch('/stand', { method: 'POST' });
+            const data = await response.json();
+
+            // Reveal all dealer cards and final values
+            document.getElementById("dealer-hand").innerHTML = ""; // Clear the dealer hand
+            for (const card of data.dealer_hand) {
+                await revealCard("dealer-hand", `Dealer shows: ${card.value} of ${card.suit}`);
+            }
+            updateValue("dealer-value", `Dealer Hand Value: ${data.dealer_value}`);
+
+            // Show the game result
+            document.getElementById('result').innerText = data.result;
+            endGame();
+        }
+
+        function updateValue(elementId, valueText) {
+            document.getElementById(elementId).innerText = valueText;
+        }
+
+        async function revealCard(elementId, cardText) {
+            const element = document.getElementById(elementId);
+            const li = document.createElement("li");
+            li.innerText = cardText;
+            element.appendChild(li);
+
+            // Wait for a short delay before continuing
+            await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
+        }
+
+        function clearResults() {
+            document.getElementById("player-hand").innerHTML = "";
+            document.getElementById("dealer-hand").innerHTML = "";
+            document.getElementById("player-value").innerText = "";
+            document.getElementById("dealer-value").innerText = "";
+            document.getElementById("result").innerText = "";
+        }
+
+        function endGame() {
+            // Hide game buttons and show the "New Game" button
+            document.getElementById('hit').style.display = 'none';
+            document.getElementById('stand').style.display = 'none';
+            document.getElementById('new-game').style.display = 'inline';
+        }
+    </script>
+</head>
+<body>
+    <h1>Simple Black Jack</h1>
+    <ul id="player-hand">Player Hand:</ul>
+    <p id="player-value"></p>
+    <ul id="dealer-hand">Dealer Hand:</ul>
+    <p id="dealer-value"></p>
+    <p id="result"></p>
+    <button id="hit" onclick="hit()" style="display: none;">Hit</button>
+    <button id="stand" onclick="stand()" style="display: none;">Stand</button>
+    <button id="new-game" onclick="startGame()">Start New Game</button>
+</body>
+</html>
