@@ -14,13 +14,15 @@ def index():
 @app.route("/start", methods=["POST"])
 def start():
     global game
-    game = BlackJack()  # Start a new game
-    game.start_game()  # Deal initial cards
-
+    game = BlackJack()
+    game.start_game()
     return jsonify({
         "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
-        "dealer_hand": [{"value": game.dealer_hand[0]["value"], "suit": game.dealer_hand[0]["suit"]}, "Hidden"]
+        "dealer_hand": [{"value": game.dealer_hand[0]["value"], "suit": game.dealer_hand[0]["suit"]}, "Hidden"],
+        "player_value": game.get_hand_value(game.player_hand),
+        "dealer_value": game.get_hand_value([game.dealer_hand[0]])  # Only the first card is visible
     })
+
 
 
 @app.route("/hit", methods=["POST"])
@@ -29,21 +31,18 @@ def hit():
     if not game:
         return jsonify({"error": "Game not started"}), 400
 
-    # Player draws a card
     player_value = game.player_hit()
-
-    # Check if player busts
     if player_value > 21:
         return jsonify({
             "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
+            "player_value": player_value,
             "result": "Dealer wins! Player busted."
         })
 
-    # Otherwise, continue game
     return jsonify({
-        "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand]
+        "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
+        "player_value": player_value
     })
-
 
 @app.route("/stand", methods=["POST"])
 def stand():
@@ -51,17 +50,15 @@ def stand():
     if not game:
         return jsonify({"error": "Game not started"}), 400
 
-    # Dealer's turn
     dealer_value = game.dealer_turn()
     result = game.check_winner()
-
-    # Reveal all cards and return the result
     return jsonify({
         "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
+        "player_value": game.get_hand_value(game.player_hand),
         "dealer_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.dealer_hand],
+        "dealer_value": dealer_value,
         "result": result
     })
-
 
 if __name__ == "__main__":
     app.run(debug=True)

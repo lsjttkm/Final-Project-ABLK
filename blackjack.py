@@ -1,45 +1,56 @@
-import random
+import requests
 
 class BlackJack:
     def __init__(self):
-        self.deck = self.create_deck()
+        self.deck_id = None
         self.player_hand = []
         self.dealer_hand = []
-        random.shuffle(self.deck)
 
     def create_deck(self):
-        suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
-        values = [
-            {"value": "2", "points": 2}, {"value": "3", "points": 3}, {"value": "4", "points": 4},
-            {"value": "5", "points": 5}, {"value": "6", "points": 6}, {"value": "7", "points": 7},
-            {"value": "8", "points": 8}, {"value": "9", "points": 9}, {"value": "10", "points": 10},
-            {"value": "JACK", "points": 10}, {"value": "QUEEN", "points": 10}, {"value": "KING", "points": 10},
-            {"value": "ACE", "points": 11}
-        ]
-        return [{"value": value["value"], "suit": suit, "points": value["points"]} for suit in suits for value in values]
+        response = requests.get("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
+        if response.status_code == 200:
+            self.deck_id = response.json()["deck_id"]
+        else:
+            raise Exception("Failed to create deck")
 
-    def deal_card(self):
-        return self.deck.pop()
+    def draw_cards(self, count):
+        if not self.deck_id:
+            self.create_deck()
+        response = requests.get(f"https://deckofcardsapi.com/api/deck/{self.deck_id}/draw/?count={count}")
+        if response.status_code == 200:
+            return response.json()["cards"]
+        else:
+            raise Exception("Failed to draw cards")
 
     def start_game(self):
-        self.player_hand = [self.deal_card(), self.deal_card()]
-        self.dealer_hand = [self.deal_card(), self.deal_card()]
+        self.create_deck()
+        self.player_hand = self.draw_cards(2)
+        self.dealer_hand = self.draw_cards(2)
 
     def hand_value(self, hand):
-        value = sum(card["points"] for card in hand)
-        aces = sum(1 for card in hand if card["value"] == "ACE")
+        values = {"ACE": 11, "KING": 10, "QUEEN": 10, "JACK": 10}
+        value = 0
+        aces = 0
+        for card in hand:
+            card_value = card["value"]
+            if card_value.isdigit():
+                value += int(card_value)
+            else:
+                value += values[card_value]
+                if card_value == "ACE":
+                    aces += 1
         while value > 21 and aces:
             value -= 10
             aces -= 1
         return value
 
     def player_hit(self):
-        self.player_hand.append(self.deal_card())
+        self.player_hand += self.draw_cards(1)
         return self.hand_value(self.player_hand)
 
     def dealer_turn(self):
         while self.hand_value(self.dealer_hand) < 17:
-            self.dealer_hand.append(self.deal_card())
+            self.dealer_hand += self.draw_cards(1)
         return self.hand_value(self.dealer_hand)
 
     def check_winner(self):
@@ -55,3 +66,20 @@ class BlackJack:
             return "Dealer wins!"
         else:
             return "It's a tie!"
+        
+    def get_hand_value(self, hand):
+        values = {"ACE": 11, "KING": 10, "QUEEN": 10, "JACK": 10}
+        value = 0
+        aces = 0
+        for card in hand:
+            card_value = card["value"]
+            if card_value.isdigit():
+                value += int(card_value)
+            else:
+                value += values[card_value]
+                if card_value == "ACE":
+                    aces += 1
+        while value > 21 and aces:
+            value -= 10
+            aces -= 1
+        return value
