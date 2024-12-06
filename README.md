@@ -13,5 +13,8 @@ pip install -r requirements.txt
 Run the example script:
 
 ```sh
-python app/my_script.py
+# Mac OS:
+FLASK_APP=web_app flask run
+
+flask run
 ```

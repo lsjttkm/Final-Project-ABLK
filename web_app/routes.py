@@ -1,17 +1,14 @@
-from flask import Flask, jsonify, send_file
-from blackjack import BlackJack
+from flask import Blueprint, jsonify, render_template
+from app.blackjack import BlackJack
 
-app = Flask(__name__, static_folder="static")
+bp = Blueprint("routes", __name__)
 game = None  # Initialize the game object globally
 
-
-@app.route("/")
+@bp.route("/")
 def index():
-    # Serve the static HTML file
-    return send_file("static/index.html")
+    return render_template("index.html")
 
-
-@app.route("/start", methods=["POST"])
+@bp.route("/start", methods=["POST"])
 def start():
     global game
     game = BlackJack()
@@ -20,12 +17,10 @@ def start():
         "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
         "dealer_hand": [{"value": game.dealer_hand[0]["value"], "suit": game.dealer_hand[0]["suit"]}, "Hidden"],
         "player_value": game.get_hand_value(game.player_hand),
-        "dealer_value": game.get_hand_value([game.dealer_hand[0]])  # Only the first card is visible
+        "dealer_value": game.get_hand_value([game.dealer_hand[0]])
     })
 
-
-
-@app.route("/hit", methods=["POST"])
+@bp.route("/hit", methods=["POST"])
 def hit():
     global game
     if not game:
@@ -44,7 +39,7 @@ def hit():
         "player_value": player_value
     })
 
-@app.route("/stand", methods=["POST"])
+@bp.route("/stand", methods=["POST"])
 def stand():
     global game
     if not game:
@@ -59,6 +54,3 @@ def stand():
         "dealer_value": dealer_value,
         "result": result
     })
-
-if __name__ == "__main__":
-    app.run(debug=True)
