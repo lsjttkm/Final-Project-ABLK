@@ -5,8 +5,8 @@ bp = Blueprint("routes", __name__)
 game = None  # Initialize the game object globally
 
 @bp.route("/")
-def index():
-    return render_template("index.html")
+def blackjack():
+    return render_template("blackjack_page.html")
 
 @bp.route("/start", methods=["POST"])
 def start():

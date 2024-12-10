@@ -13,7 +13,7 @@
     <title>Black Jack Game</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
                 <i class="bi bi-suit-spade-fill" style="font-size: 1.7rem; color: white;"></i>
@@ -36,11 +36,11 @@
                 <p id="dealer-value" class="fw-bold"></p>
             </div>
         </div>
-        <p id="result" class="text-center fs-4 text-danger fw-bold"></p>
+        <p id="result" class="text-center fs-4 text-dark fw-bold"></p>
         <div class="d-flex justify-content-center gap-2">
-            <button id="hit" class="btn btn-success" onclick="hit()" style="display: none;">Hit</button>
-            <button id="stand" class="btn btn-warning" onclick="stand()" style="display: none;">Stand</button>
-            <button id="new-game" class="btn btn-primary" onclick="startGame()">Start New Game</button>
+            <button id="hit" class="btn btn-dark" onclick="hit()" style="display: none;">Hit</button>
+            <button id="stand" class="btn btn-danger" onclick="stand()" style="display: none;">Stand</button>
+            <button id="new-game" class="btn btn-danger" onclick="startGame()">Start New Game</button>
         </div>
     </div>
 
@@ -56,6 +56,8 @@
     <script>
         async function startGame() {
             try {
+                document.getElementById('new-game').style.display = 'none';
+                
                 const response = await fetch('/start', { method: 'POST' });
                 if (!response.ok) throw new Error(`Error: ${response.status}`);
                 const data = await response.json();
@@ -67,12 +69,11 @@
                 
                 await revealCard("player-hand", `Player gets: ${data.player_hand[1].value} of ${data.player_hand[1].suit}`);
                 updateValue("player-value", `Player Hand Value: ${data.player_value}`);
-                updateValue("dealer-value", `Dealer Hand Value: ${data.dealer_value}`);
+                updateValue("dealer-value", `Dealer Hand Value: -`);
                 await revealCard("dealer-hand", `Dealer has a hidden card`);
 
                 document.getElementById('hit').style.display = 'inline';
                 document.getElementById('stand').style.display = 'inline';
-                document.getElementById('new-game').style.display = 'none';
             } catch (err) {
                 console.error(err);
                 alert("Failed to start the game. Check the console for more details.");
