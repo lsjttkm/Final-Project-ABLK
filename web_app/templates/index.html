@@ -63,10 +63,10 @@
                 clearResults();
 
                 await revealCard("player-hand", `Player gets: ${data.player_hand[0].value} of ${data.player_hand[0].suit}`);
+                await revealCard("dealer-hand", `Dealer shows: ${data.dealer_hand[0].value} of ${data.dealer_hand[0].suit}`);
+                
                 await revealCard("player-hand", `Player gets: ${data.player_hand[1].value} of ${data.player_hand[1].suit}`);
                 updateValue("player-value", `Player Hand Value: ${data.player_value}`);
-
-                await revealCard("dealer-hand", `Dealer shows: ${data.dealer_hand[0].value} of ${data.dealer_hand[0].suit}`);
                 updateValue("dealer-value", `Dealer Hand Value: ${data.dealer_value}`);
                 await revealCard("dealer-hand", `Dealer has a hidden card`);
 
