@@ -2,21 +2,42 @@
 
 {% block title %}{% endblock %}
 
+{% block head %}
+<style>
+    .card-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+        gap: 10px; /* Space between cards */
+    }
+    .card-columns > img {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <h1 class="mb-4">BLACK JACK</h1>
+
+<!-- Dealer Hand -->
 <div class="row">
     <div class="col-md-6">
-        <h3>Player Hand:</h3>
-        <ul id="player-hand" class="list-group mb-3"></ul>
-        <p id="player-value" class="fw-bold"></p>
-    </div>
-    <div class="col-md-6">
         <h3>Dealer Hand:</h3>
-        <ul id="dealer-hand" class="list-group mb-3"></ul>
-        <p id="dealer-value" class="fw-bold"></p>
+        <div id="dealer-hand" class="card-columns d-flex flex-wrap"></div>
+        <p id="dealer-value" class="fw-bold mt-3"></p>
     </div>
 </div>
+
+<!-- Player Hand -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h3>Player Hand:</h3>
+        <div id="player-hand" class="card-columns d-flex flex-wrap"></div>
+        <p id="player-value" class="fw-bold mt-3"></p>
+    </div>
+</div>
+
 <p id="result" class="text-center fs-4 text-dark fw-bold"></p>
+
 <div class="d-flex justify-content-center gap-2">
     <button id="hit" class="btn btn-dark" onclick="hit()" style="display: none;">Hit</button>
     <button id="stand" class="btn btn-danger" onclick="stand()" style="display: none;">Stand</button>
