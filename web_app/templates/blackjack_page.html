@@ -1,22 +1,43 @@
 {% extends "bootstrap_layout.html" %}
 
-{% block title %}Blackjack - Casino Games{% endblock %}
+{% block title %}{% endblock %}
+
+{% block head %}
+<style>
+    .card-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+        gap: 10px; /* Space between cards */
+    }
+    .card-columns > img {
+        width: 100%;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<h1 class="text-center mb-4">Simple Black Jack</h1>
+<h1 class="mb-4 text-danger fw-bold">BLACK JACK</h1>
+
+<!-- Dealer Hand -->
 <div class="row">
     <div class="col-md-6">
-        <h3>Player Hand:</h3>
-        <ul id="player-hand" class="list-group mb-3"></ul>
-        <p id="player-value" class="fw-bold"></p>
-    </div>
-    <div class="col-md-6">
-        <h3>Dealer Hand:</h3>
-        <ul id="dealer-hand" class="list-group mb-3"></ul>
-        <p id="dealer-value" class="fw-bold"></p>
+        <h3 class = "text-light">Dealer Hand:</h3>
+        <div id="dealer-hand" class="card-columns d-flex flex-wrap"></div>
+        <p id="dealer-value" class="fw-bold mt-3 text-light"></p>
     </div>
 </div>
-<p id="result" class="text-center fs-4 text-dark fw-bold"></p>
+
+<!-- Player Hand -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h3 class = "text-light">Player Hand:</h3>
+        <div id="player-hand" class="card-columns d-flex flex-wrap text-light"></div>
+        <p id="player-value" class="fw-bold mt-3 text-light"></p>
+    </div>
+</div>
+
+<p id="result" class="text-center fs-4 text-light fw-bold"></p>
+
 <div class="d-flex justify-content-center gap-2">
     <button id="hit" class="btn btn-dark" onclick="hit()" style="display: none;">Hit</button>
     <button id="stand" class="btn btn-danger" onclick="stand()" style="display: none;">Stand</button>
@@ -34,13 +55,15 @@
 
             clearResults();
 
-            await revealCard("player-hand", `Player gets: ${data.player_hand[0].value} of ${data.player_hand[0].suit}`);
-            await revealCard("dealer-hand", `Dealer shows: ${data.dealer_hand[0].value} of ${data.dealer_hand[0].suit}`);
+            await revealCard("player-hand", data.player_hand[0]);
+            await revealCard("dealer-hand", data.dealer_hand[0]);
+            await revealCard("player-hand", data.player_hand[1]);
             
-            await revealCard("player-hand", `Player gets: ${data.player_hand[1].value} of ${data.player_hand[1].suit}`);
+            const hiddenCard = { value: "Hidden", suit: "Hidden", image: "https://deckofcardsapi.com/static/img/back.png" };
+            await revealCard("dealer-hand", hiddenCard);
+
             updateValue("player-value", `Player Hand Value: ${data.player_value}`);
-            updateValue("dealer-value", `Dealer Hand Value: -`);
-            await revealCard("dealer-hand", `Dealer has a hidden card`);
+            updateValue("dealer-value", `Dealer Hand Value: ${data.dealer_value}`);
 
             document.getElementById('hit').style.display = 'inline';
             document.getElementById('stand').style.display = 'inline';
@@ -56,10 +79,14 @@
             if (!response.ok) throw new Error(`Error: ${response.status}`);
             const data = await response.json();
 
+            // Reveal the newly drawn card
             const newCard = data.player_hand[data.player_hand.length - 1];
-            await revealCard("player-hand", `Player gets: ${newCard.value} of ${newCard.suit}`);
+            await revealCard("player-hand", newCard);
+
+            // Update the player's hand value
             updateValue("player-value", `Player Hand Value: ${data.player_value}`);
 
+            // If the player busted, end the game and show the result
             if (data.result) {
                 document.getElementById('result').innerText = data.result;
                 endGame();
@@ -76,12 +103,13 @@
             if (!response.ok) throw new Error(`Error: ${response.status}`);
             const data = await response.json();
 
+            // Clear the dealer's hand and reveal all cards
             document.getElementById("dealer-hand").innerHTML = "";
             for (const card of data.dealer_hand) {
-                await revealCard("dealer-hand", `Dealer shows: ${card.value} of ${card.suit}`);
+                await revealCard("dealer-hand", card);
             }
-            updateValue("dealer-value", `Dealer Hand Value: ${data.dealer_value}`);
 
+            updateValue("dealer-value", `Dealer Hand Value: ${data.dealer_value}`);
             document.getElementById('result').innerText = data.result;
             endGame();
         } catch (err) {
@@ -94,12 +122,16 @@
         document.getElementById(elementId).innerText = valueText;
     }
 
-    async function revealCard(elementId, cardText) {
+    async function revealCard(elementId, card) {
         const element = document.getElementById(elementId);
-        const li = document.createElement("li");
-        li.className = "list-group-item";
-        li.innerText = cardText;
-        element.appendChild(li);
+        const img = document.createElement("img");
+        img.src = card.image;
+        img.alt = `${card.value} of ${card.suit}`;
+        img.className = "card-img";
+        img.style.width = "100px"; // Optional: Customize card size
+        img.style.marginRight = "10px";
+
+        element.appendChild(img);
 
         await new Promise(resolve => setTimeout(resolve, 1000));
     }

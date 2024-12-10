@@ -14,8 +14,10 @@ def start():
     game = BlackJack()
     game.start_game()
     return jsonify({
-        "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
-        "dealer_hand": [{"value": game.dealer_hand[0]["value"], "suit": game.dealer_hand[0]["suit"]}, "Hidden"],
+        "player_hand": [{"value": card["value"], "suit": card["suit"], "image": card["image"]} for card in game.player_hand],
+        "dealer_hand": [{"value": game.dealer_hand[0]["value"], "suit": game.dealer_hand[0]["suit"], "image": game.dealer_hand[0]["image"]}, 
+                        {"value": "Hidden", "suit": "Hidden", "image": "https://deckofcardsapi.com/static/img/back.png"}
+                         ],
         "player_value": game.get_hand_value(game.player_hand),
         "dealer_value": game.get_hand_value([game.dealer_hand[0]])
     })
@@ -29,13 +31,13 @@ def hit():
     player_value = game.player_hit()
     if player_value > 21:
         return jsonify({
-            "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
+            "player_hand": [{"value": card["value"], "suit": card["suit"], "image": card["image"]} for card in game.player_hand],
             "player_value": player_value,
             "result": "Dealer wins! Player busted."
         })
 
     return jsonify({
-        "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
+        "player_hand": [{"value": card["value"], "suit": card["suit"], "image": card["image"]} for card in game.player_hand],
         "player_value": player_value
     })
 
@@ -48,9 +50,9 @@ def stand():
     dealer_value = game.dealer_turn()
     result = game.check_winner()
     return jsonify({
-        "player_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.player_hand],
+        "player_hand": [{"value": card["value"], "suit": card["suit"], "image": card["image"]} for card in game.player_hand],
         "player_value": game.get_hand_value(game.player_hand),
-        "dealer_hand": [{"value": card["value"], "suit": card["suit"]} for card in game.dealer_hand],
+        "dealer_hand": [{"value": card["value"], "suit": card["suit"], "image": card["image"]} for card in game.dealer_hand],
         "dealer_value": dealer_value,
         "result": result
     })
