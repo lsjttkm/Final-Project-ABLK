@@ -1,12 +1,12 @@
 {% extends "bootstrap_layout.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<h1 class="text-center fw-bold text-danger">Welcome to Casino Games</h1>
+<h1 class="text-center fw-bold text-danger">Welcome to Kim & Bulgarino Casino</h1>
 <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
         <!-- Blackjack Slide -->
         <div class="carousel-item active">
-            <img src="/static/blackjack.jpg" class="d-block w-100" alt="Blackjack">
+            <img src="/static/blackjack.jpeg" class="d-block w-100" alt="Blackjack">
             <div class="carousel-caption">
                 <h5>Blackjack</h5>
                 <p>Play the classic card game!</p>
@@ -19,7 +19,7 @@
             <div class="carousel-caption">
                 <h5>Poker</h5>
                 <p>Show off your poker face!</p>
-                <a href="{{ url_for('home_routes.play_game', game_name='roulette') }}" class="btn btn-danger">Play Right Now</a>
+                <a href="{{ url_for('home_routes.play_game', game_name='roulette') }}" class="btn btn-secondary">Currently Unavailable</a>
             </div>
         </div>
         <!-- Roulette Slide -->
@@ -28,7 +28,7 @@
             <div class="carousel-caption">
                 <h5>Roulette</h5>
                 <p>Spin the wheel of fortune!</p>
-                <a href="{{ url_for('home_routes.play_game', game_name='poker') }}" class="btn btn-danger">Play Right Now</a>
+                <a href="{{ url_for('home_routes.play_game', game_name='poker') }}" class="btn btn-secondary">Currently Unavailable</a>
             </div>
         </div>
     </div>

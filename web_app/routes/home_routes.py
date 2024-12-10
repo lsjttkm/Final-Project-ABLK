@@ -12,5 +12,4 @@ def play_game(game_name):
     if game_name == "blackjack":
         return redirect(url_for("blackjack_routes.blackjack"))
     else:
-        flash(f"Sorry, {game_name.capitalize()} is not available right now!", "info")
-        return redirect(url_for("home_routes.home"))
+        return redirect("/")
