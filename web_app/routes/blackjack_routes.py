@@ -1,14 +1,14 @@
 from flask import Blueprint, jsonify, render_template
 from app.blackjack import BlackJack
 
-bp = Blueprint("routes", __name__)
+blackjack_bp = Blueprint("routes", __name__)
 game = None  # Initialize the game object globally
 
-@bp.route("/")
+@blackjack_bp.route("/play/blackjack")
 def blackjack():
     return render_template("blackjack_page.html")
 
-@bp.route("/start", methods=["POST"])
+@blackjack_bp.route("/start", methods=["POST"])
 def start():
     global game
     game = BlackJack()
@@ -20,7 +20,7 @@ def start():
         "dealer_value": game.get_hand_value([game.dealer_hand[0]])
     })
 
-@bp.route("/hit", methods=["POST"])
+@blackjack_bp.route("/hit", methods=["POST"])
 def hit():
     global game
     if not game:
@@ -39,7 +39,7 @@ def hit():
         "player_value": player_value
     })
 
-@bp.route("/stand", methods=["POST"])
+@blackjack_bp.route("/stand", methods=["POST"])
 def stand():
     global game
     if not game:

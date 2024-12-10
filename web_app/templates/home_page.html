@@ -1,0 +1,50 @@
+{% extends "bootstrap_layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1 class="text-center fw-bold text-danger">Welcome to Casino Games</h1>
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <!-- Blackjack Slide -->
+        <div class="carousel-item active">
+            <img src="/static/blackjack.jpg" class="d-block w-100" alt="Blackjack">
+            <div class="carousel-caption">
+                <h5>Blackjack</h5>
+                <p>Play the classic card game!</p>
+                <a href="{{ url_for('home_routes.play_game', game_name='blackjack') }}" class="btn btn-danger">Play Right Now</a>
+            </div>
+        </div>
+        <!-- Poker Slide -->
+        <div class="carousel-item">
+            <img src="/static/poker.jpg" class="d-block w-100" alt="Poker">
+            <div class="carousel-caption">
+                <h5>Poker</h5>
+                <p>Show off your poker face!</p>
+                <a href="{{ url_for('home_routes.play_game', game_name='roulette') }}" class="btn btn-danger">Play Right Now</a>
+            </div>
+        </div>
+        <!-- Roulette Slide -->
+        <div class="carousel-item">
+            <img src="/static/roulette.jpg" class="d-block w-100" alt="Roulette">
+            <div class="carousel-caption">
+                <h5>Roulette</h5>
+                <p>Spin the wheel of fortune!</p>
+                <a href="{{ url_for('home_routes.play_game', game_name='poker') }}" class="btn btn-danger">Play Right Now</a>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<script>
+    function showUnavailableMessage(game) {
+        fetch(`/unavailable/${game}`, { method: 'GET' }).then(() => location.reload());
+    }
+</script>
+{% endblock %}
