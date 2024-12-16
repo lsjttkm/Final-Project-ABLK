@@ -30,3 +30,9 @@ Run the web app (then view in the browser at http://localhost:5000/):
 # Mac OS:
 FLASK_APP=web_app flask run
 ```
+
+## Run Testing
+
+```sh
+pytest
+```
