@@ -12,37 +12,62 @@
     .card-columns > img {
         width: 100%;
     }
+    .strategy-chart {
+        width: 100%;      /* Makes it fill the parent container */
+        max-width: 500px; /* Ensures it doesn’t get too big */
+        height: auto;     /* Maintains aspect ratio */
+        border: 2px solid white;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        margin: 10px auto;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<h1 class="mb-4 text-danger fw-bold">BLACK JACK</h1>
-
-<!-- Dealer Hand -->
 <div class="row">
-    <div class="col-md-6">
-        <h3 class = "text-light">Dealer Hand:</h3>
-        <div id="dealer-hand" class="card-columns d-flex flex-wrap"></div>
-        <p id="dealer-value" class="fw-bold mt-3 text-light"></p>
+    <!-- Game Section -->
+    <div class="col-md-8">
+        <h1 class="mb-4 text-danger fw-bold">BLACK JACK</h1>
+
+        <!-- Dealer Hand -->
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class = "text-light">Dealer Hand:</h3>
+                <div id="dealer-hand" class="card-columns d-flex flex-wrap"></div>
+                <p id="dealer-value" class="fw-bold mt-3 text-light"></p>
+            </div>
+        </div>
+    
+        <!-- Player Hand -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h3 class = "text-light">Player Hand:</h3>
+                <div id="player-hand" class="card-columns d-flex flex-wrap text-light"></div>
+                <p id="player-value" class="fw-bold mt-3 text-light"></p>
+            </div>
+        </div>
+    
+        <p id="result" class="text-center fs-4 text-light fw-bold"></p>
+    
+        <div class="d-flex justify-content-center gap-2">
+            <button id="hit" class="btn btn-dark" onclick="hit()" style="display: none;">Hit</button>
+            <button id="stand" class="btn btn-danger" onclick="stand()" style="display: none;">Stand</button>
+            <button id="new-game" class="btn btn-danger" onclick="startGame()">Start New Game</button>
+            <button id="toggle-chart" class="btn btn-secondary" onclick="toggleChart()">Open Strategy Chart</button>
+        </div>
+    </div>
+
+    <!-- Strategy Chart -->
+    <div id="chart-container" class="col-md-4" style="display: none;">
+        <h3 class="text-light">STRATEGY CHART</h3>
+        <img src="{{ url_for('static', filename='strategy_chart.jpg') }}" 
+             alt="Blackjack Strategy Chart" 
+             class="img-fluid rounded shadow strategy-chart">
     </div>
 </div>
 
-<!-- Player Hand -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <h3 class = "text-light">Player Hand:</h3>
-        <div id="player-hand" class="card-columns d-flex flex-wrap text-light"></div>
-        <p id="player-value" class="fw-bold mt-3 text-light"></p>
-    </div>
-</div>
 
-<p id="result" class="text-center fs-4 text-light fw-bold"></p>
-
-<div class="d-flex justify-content-center gap-2">
-    <button id="hit" class="btn btn-dark" onclick="hit()" style="display: none;">Hit</button>
-    <button id="stand" class="btn btn-danger" onclick="stand()" style="display: none;">Stand</button>
-    <button id="new-game" class="btn btn-danger" onclick="startGame()">Start New Game</button>
-</div>
 
 <script>
     async function startGame() {
@@ -149,5 +174,22 @@
         document.getElementById('stand').style.display = 'none';
         document.getElementById('new-game').style.display = 'inline';
     }
+
+    function toggleChart() {
+        const chartContainer = document.getElementById('chart-container');
+        const toggleButton = document.getElementById('toggle-chart');
+
+        if (chartContainer.style.display === 'none') {
+            // Show the chart
+            chartContainer.style.display = 'block';
+            toggleButton.innerText = 'Close Strategy Chart';
+        } else {
+            // Hide the chart
+            chartContainer.style.display = 'none';
+            toggleButton.innerText = 'Open Strategy Chart';
+        }
+    }
+
+
 </script>
 {% endblock %}
