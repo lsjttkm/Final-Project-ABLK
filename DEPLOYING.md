@@ -33,4 +33,5 @@ Whenever you push new code to the designated branch in your GitHub repository, i
 
 You can also trigger builds manually.
 
-After a deployment build has finished, you should be able to view the updated app at the URL provided in the top left (i.e. `https://YOUR_APP.onrender.com/`).
+After a deployment build has finished, you should be able to view the updated app at the URL:
+(https://final-project-ablk.onrender.com)
