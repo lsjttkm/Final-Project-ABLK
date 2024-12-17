@@ -26,7 +26,7 @@ pip install -r requirements.txt
 
 Run the web app (then view in the browser at http://localhost:5000/):
 
-# Mac OS:
+### Mac OS:
 ```sh
 FLASK_APP=web_app flask run
 ```
